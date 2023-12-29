@@ -1,10 +1,10 @@
 import { IconButtonStyle } from "./style/IconButtonStyle";
 
 type IconButtonProps = {
-  children: string | JSX.Element;
+  children: React.SVGProps<SVGSVGElement> & React.SVGProps<SVGPathElement>;
   onClick: () => void;
 };
 
 export const IconButton = ({ children, onClick }: IconButtonProps) => {
-  return <IconButtonStyle onClick={onClick}></IconButtonStyle>;
+  return <IconButtonStyle onClick={onClick}>{children}</IconButtonStyle>;
 };
