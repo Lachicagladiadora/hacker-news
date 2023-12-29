@@ -63,11 +63,19 @@ function App() {
         </SectionForSelector>
         <SectionForArticles>
           <Article>
-            <Paragraph>
-              dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv lkb
-              dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf
-              gjv lkb dfgn kl s
-            </Paragraph>
+            <>
+              <img
+                src="https://dainty-rabanadas-77bfd0.netlify.app/iconmonstr-time-2_2.svg"
+                alt="hours"
+                height={16}
+              />{" "}
+              1 hours ago by Dartos
+              <Paragraph>
+                dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv
+                lkb dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss
+                glkdf gjv lkb dfgn kl s
+              </Paragraph>
+            </>
           </Article>
           <Article>
             <Paragraph>
