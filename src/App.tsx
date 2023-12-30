@@ -4,12 +4,12 @@ import { Button } from "./components/Button";
 import { Header } from "./components/Header";
 import { Selector } from "./components/Selector";
 import { SelectorOption } from "./components/SelectorOption";
-import { Paragraph } from "./components/style/ArticleStyle";
 import { Main } from "./components/style/Main";
 import { SectionForButtons } from "./components/style/SectionForButtons";
 import { ContainOptions } from "./components/style/SelectorStyle";
 import { SectionForArticles } from "./components/style/SectionForArticles";
 import { SectionForSelector } from "./components/style/SectionForSelector";
+import { ParagraphStyle } from "./components/style/ParagraphStyle";
 
 function App() {
   const [selectedValue, setSelectedValue] = useState<string>("react");
@@ -70,61 +70,61 @@ function App() {
                 height={16}
               />{" "}
               1 hours ago by Dartos
-              <Paragraph>
+              <ParagraphStyle>
                 dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv
                 lkb dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss
                 glkdf gjv lkb dfgn kl s
-              </Paragraph>
+              </ParagraphStyle>
             </>
           </Article>
           <Article>
-            <Paragraph>
+            <ParagraphStyle>
               dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv lkb
               dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf
               gjv lkb dfgn kl s
-            </Paragraph>
+            </ParagraphStyle>
           </Article>
           <Article>
-            <Paragraph>
+            <ParagraphStyle>
               dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv lkb
               dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf
               gjv lkb dfgn kl s
-            </Paragraph>
+            </ParagraphStyle>
           </Article>
           <Article>
-            <Paragraph>
+            <ParagraphStyle>
               dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv lkb
               dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf
               gjv lkb dfgn kl s
-            </Paragraph>
+            </ParagraphStyle>
           </Article>
           <Article>
-            <Paragraph>
+            <ParagraphStyle>
               dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv lkb
               dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf
               gjv lkb dfgn kl s
-            </Paragraph>
+            </ParagraphStyle>
           </Article>
           <Article>
-            <Paragraph>
+            <ParagraphStyle>
               dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv lkb
               dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf
               gjv lkb dfgn kl s
-            </Paragraph>
+            </ParagraphStyle>
           </Article>
           <Article>
-            <Paragraph>
+            <ParagraphStyle>
               dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv lkb
               dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf
               gjv lkb dfgn kl s
-            </Paragraph>
+            </ParagraphStyle>
           </Article>
           <Article>
-            <Paragraph>
+            <ParagraphStyle>
               dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv lkb
               dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf
               gjv lkb dfgn kl s
-            </Paragraph>
+            </ParagraphStyle>
           </Article>
         </SectionForArticles>
       </Main>

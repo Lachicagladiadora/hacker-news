@@ -1,7 +1,10 @@
 import { IconButtonStyle } from "./style/IconButtonStyle";
+import React, { ReactElement } from "react";
+
+type SVGProps = React.SVGProps<SVGSVGElement>;
 
 type IconButtonProps = {
-  children: React.SVGProps<SVGSVGElement> & React.SVGProps<SVGPathElement>;
+  children: ReactElement<SVGProps> | ReactElement<SVGProps & { d: string }>;
   onClick: () => void;
 };
 
