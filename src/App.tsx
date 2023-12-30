@@ -10,6 +10,7 @@ import { ContainOptions } from "./components/style/SelectorStyle";
 import { SectionForArticles } from "./components/style/SectionForArticles";
 import { SectionForSelector } from "./components/style/SectionForSelector";
 import { ParagraphStyle } from "./components/style/ParagraphStyle";
+import { Paragraph } from "./components/Paragraph";
 
 function App() {
   const [selectedValue, setSelectedValue] = useState<string>("react");
@@ -63,19 +64,11 @@ function App() {
         </SectionForSelector>
         <SectionForArticles>
           <Article>
-            <>
-              <img
-                src="https://dainty-rabanadas-77bfd0.netlify.app/iconmonstr-time-2_2.svg"
-                alt="hours"
-                height={16}
-              />{" "}
-              1 hours ago by Dartos
-              <ParagraphStyle>
-                dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv
-                lkb dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss
-                glkdf gjv lkb dfgn kl s
-              </ParagraphStyle>
-            </>
+            <Paragraph
+              time="5"
+              author="dardos"
+              text="lskdfjklsfjlsdkfjklsdjflsjdflsja"
+            />
           </Article>
           <Article>
             <ParagraphStyle>

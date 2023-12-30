@@ -1,5 +1,3 @@
-// import { SVGProps } from "react";
-// import { IconButton } from "./IconButton";
 import { useState } from "react";
 import { ArticleStyle } from "./style/ArticleStyle";
 import { IconButton } from "./IconButton";
