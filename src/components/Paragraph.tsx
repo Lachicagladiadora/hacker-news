@@ -1,3 +1,5 @@
+import { ImageSize } from "../constants";
+import { DivTime } from "./style/DivTime";
 import { ParagraphStyle } from "./style/ParagraphStyle";
 
 type ParagraphProps = {
@@ -9,14 +11,15 @@ type ParagraphProps = {
 export const Paragraph = ({ time, author, text }: ParagraphProps) => {
   return (
     <ParagraphStyle>
-      <div>
+      <DivTime>
         <img
           src="https://dainty-rabanadas-77bfd0.netlify.app/iconmonstr-time-2_2.svg"
           alt="hours"
-          height={16}
-        />{" "}
-        1 {time} ago by {author}
-      </div>
+          height={ImageSize.S}
+          style={{ marginRight: "10px" }}
+        />
+        {time} ago by {author}
+      </DivTime>
       <p>{text}</p>
     </ParagraphStyle>
   );

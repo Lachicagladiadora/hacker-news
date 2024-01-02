@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { ArticleStyle } from "./style/ArticleStyle";
 import { IconButton } from "./IconButton";
+import { ImageSize } from "../constants";
 
 type ArticleProps = {
   children: string | JSX.Element;
-  // icon: SVGProps<SVGSVGElement> | JSX.Element;
-  // onClick: () => void;
 };
 
 export const Article = ({ children }: ArticleProps) => {
@@ -19,7 +18,7 @@ export const Article = ({ children }: ArticleProps) => {
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
-              height="22"
+              height={`${ImageSize.L}`}
               viewBox="0 0 24 22"
             >
               <path

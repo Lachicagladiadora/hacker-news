@@ -65,9 +65,9 @@ function App() {
         <SectionForArticles>
           <Article>
             <Paragraph
-              time="5"
+              time="1 minute"
               author="dardos"
-              text="lskdfjklsfjlsdkfjklsdjflsjdflsja"
+              text="Eating fewer calories can ward off ageing"
             />
           </Article>
           <Article>

@@ -4,6 +4,6 @@ export const TextSize = {
 };
 
 export const ImageSize = {
-  S: "22px",
+  S: "14px",
   L: "24px",
 };
