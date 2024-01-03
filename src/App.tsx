@@ -9,22 +9,26 @@ import { SectionForButtons } from "./components/style/SectionForButtons";
 import { ContainOptions } from "./components/style/SelectorStyle";
 import { SectionForArticles } from "./components/style/SectionForArticles";
 import { SectionForSelector } from "./components/style/SectionForSelector";
-import { ParagraphStyle } from "./components/style/ParagraphStyle";
 import { Paragraph } from "./components/Paragraph";
+
+const URL = "https://hn.algolia.com/api/v1/search_by_date?query";
+
+const FetchData = async (param: string) => {
+  try {
+    const Data = await fetch(`${URL}=${param}`)
+      .then((res) => res.json)
+      .then((data) => data);
+    console.log({ Data });
+    return Data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
 
 function App() {
   const [selectedValue, setSelectedValue] = useState<string>("react");
   const [visible, setVisible] = useState(false);
-
-  // const onChangeSelected = (children: string) => {
-  //   console.log("onClickSelector");
-  //   setSelectedValue(children);
-  // };
-
-  // const onShowOptions = (boolean: boolean) => {
-  //   console.log("show");
-  //   // return boolean ? "visible" : "hidden";
-  // };
 
   return (
     <>
@@ -47,7 +51,10 @@ function App() {
             <ContainOptions $visibility={visible ? "visible" : "hidden"}>
               <SelectorOption
                 children={"angular"}
-                onClick={() => setSelectedValue("angular")}
+                onClick={() => {
+                  setSelectedValue("angular");
+                  FetchData("angular");
+                }}
               />
 
               <SelectorOption
@@ -69,55 +76,6 @@ function App() {
               author="dardos"
               text="Eating fewer calories can ward off ageing"
             />
-          </Article>
-          <Article>
-            <ParagraphStyle>
-              dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv lkb
-              dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf
-              gjv lkb dfgn kl s
-            </ParagraphStyle>
-          </Article>
-          <Article>
-            <ParagraphStyle>
-              dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv lkb
-              dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf
-              gjv lkb dfgn kl s
-            </ParagraphStyle>
-          </Article>
-          <Article>
-            <ParagraphStyle>
-              dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv lkb
-              dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf
-              gjv lkb dfgn kl s
-            </ParagraphStyle>
-          </Article>
-          <Article>
-            <ParagraphStyle>
-              dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv lkb
-              dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf
-              gjv lkb dfgn kl s
-            </ParagraphStyle>
-          </Article>
-          <Article>
-            <ParagraphStyle>
-              dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv lkb
-              dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf
-              gjv lkb dfgn kl s
-            </ParagraphStyle>
-          </Article>
-          <Article>
-            <ParagraphStyle>
-              dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv lkb
-              dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf
-              gjv lkb dfgn kl s
-            </ParagraphStyle>
-          </Article>
-          <Article>
-            <ParagraphStyle>
-              dkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf gjv lkb
-              dfgn kl sdkjsl kfgsdlgl;jd iooooosv l d fkl fkdl ssssss ssss glkdf
-              gjv lkb dfgn kl s
-            </ParagraphStyle>
           </Article>
         </SectionForArticles>
       </Main>

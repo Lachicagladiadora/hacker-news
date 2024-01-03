@@ -5,5 +5,4 @@ export const DivTime = styled.div`
   align-items: center;
   width: 100%;
   font-size: 12px;
-  /* justify-content: space-between; */
 `;
