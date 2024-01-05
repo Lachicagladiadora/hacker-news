@@ -11,13 +11,15 @@ import { SectionForArticles } from "./components/style/SectionForArticles";
 import { SectionForSelector } from "./components/style/SectionForSelector";
 import { Paragraph } from "./components/Paragraph";
 
-const URL = "https://hn.algolia.com/api/v1/search_by_date?query";
+const URL = "hn.algolia.com/api/v1/search_by_date?query";
 
 const FetchData = async (param: string) => {
   try {
-    const Data = await fetch(`${URL}=${param}`)
-      .then((res) => res.json)
-      .then((data) => data);
+    const Data = await fetch(`${URL}=${param}`, {
+      headers: {},
+      method: "GET",
+    }).then((res) => res.json);
+    // .then((data) => data);
     console.log({ Data });
     return Data;
   } catch (error) {
