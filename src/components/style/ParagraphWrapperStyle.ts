@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ParagraphStyle = styled.p`
+export const ParagraphStyle = styled.div`
   width: 100%;
   height: 100%;
   color: #979797;

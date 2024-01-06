@@ -9,29 +9,31 @@ import { SectionForButtons } from "./components/style/SectionForButtons";
 import { ContainOptions } from "./components/style/SelectorStyle";
 import { SectionForArticles } from "./components/style/SectionForArticles";
 import { SectionForSelector } from "./components/style/SectionForSelector";
-import { Paragraph } from "./components/Paragraph";
+import { Paragraph } from "./components/ParagraphWrapper";
 
-const URL = "hn.algolia.com/api/v1/search_by_date?query";
+const URL = "https://hn.algolia.com/api/v1/search_by_date";
 
-const FetchData = async (param: string) => {
-  try {
-    const Data = await fetch(`${URL}=${param}`, {
-      headers: {},
-      method: "GET",
-    }).then((res) => res.json);
-    // .then((data) => data);
-    console.log({ Data });
-    return Data;
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
+const fetchData = async (param: string) => {
+  const urlWithParams = param ? `${URL}?query=${param}` : URL;
+  const data = await fetch(urlWithParams);
+  // .then((data) => data);
+  console.log({ data });
+  const dataValue = await data.json();
+  console.log({ dataValue });
+  return dataValue;
 };
+
+// try {
+// } catch (error) {
+//   console.log(error);
+//   return error;
+// }
 
 function App() {
   const [selectedValue, setSelectedValue] = useState<string>("react");
   const [visible, setVisible] = useState(false);
 
+  const onSelectOption =
   return (
     <>
       <Header>Hacker News</Header>
@@ -55,13 +57,16 @@ function App() {
                 children={"angular"}
                 onClick={() => {
                   setSelectedValue("angular");
-                  FetchData("angular");
+                  fetchData("angular");
                 }}
               />
 
               <SelectorOption
                 children={"react"}
-                onClick={() => setSelectedValue("react")}
+                onClick={() => {
+                  setSelectedValue("react");
+                  fetchData("reactjs");
+                }}
               />
 
               <SelectorOption

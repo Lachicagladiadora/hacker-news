@@ -1,6 +1,6 @@
 import { ImageSize } from "../constants";
 import { DivTime } from "./style/DivTime";
-import { ParagraphStyle } from "./style/ParagraphStyle";
+import { ParagraphStyle } from "./style/ParagraphWrapperStyle";
 
 type ParagraphProps = {
   time: string;
