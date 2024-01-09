@@ -23,7 +23,15 @@ const fetchData = async (param: string) => {
   return dataValue;
 };
 
-// const onTimeAgo = () => {};
+const onTimeAgo = (param: string): string => {
+  const currentDate: Date = new Date();
+  const createDate: Date = new Date(param);
+
+  const createMinutes = createDate.getMinutes();
+  const createHours = createDate.getHours();
+  const createDays = createDate.getDay();
+  const createMonth = createDate.getMonth();
+};
 
 function App() {
   const [selectedValue, setSelectedValue] = useState<string>("reactjs");
