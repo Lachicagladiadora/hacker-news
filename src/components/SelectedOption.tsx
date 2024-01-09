@@ -13,7 +13,7 @@ export const SelectedOption = ({ children }: SelectedOptionProps) => {
       textSize={TextSize.S}
       backgroundColor="transparent"
     >
-      {children ? `${children}` : "react"}
+      {children ? `${children}` : "reactjs"}
     </SelectorOption>
   );
 };

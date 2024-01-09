@@ -10,6 +10,7 @@ import { ContainOptions } from "./components/style/SelectorStyle";
 import { SectionForArticles } from "./components/style/SectionForArticles";
 import { SectionForSelector } from "./components/style/SectionForSelector";
 import { Paragraph } from "./components/ParagraphWrapper";
+import { DataType } from "./types";
 
 const URL = "https://hn.algolia.com/api/v1/search_by_date";
 
@@ -22,54 +23,10 @@ const fetchData = async (param: string) => {
   return dataValue;
 };
 
-// try {
-// } catch (error) {
-//   console.log(error);
-//   return error;
-// }
-
-type ArticleType = {
-  author: string;
-  comment_text: string;
-  created_at: string;
-  created_at_i: number;
-  objectID: string;
-  parent_id: number;
-  story_id: number;
-  story_title: string;
-  story_url: string;
-  updated_at: string;
-  _highlightResult: {
-    author: object;
-    comment_text: object;
-    story_title: object;
-    story_url: object;
-  };
-  _tags: string[];
-};
-
-type DataType = {
-  exhaustive: { nbHits: boolean; typo: boolean };
-  exhaustiveNbHits: boolean;
-  exhaustiveTypo: boolean;
-  hits: ArticleType[];
-  hitsPerPage: number;
-  nbHits: number;
-  nbPages: number;
-  page: number;
-  params: string;
-  processingTimeMS: number;
-  processingTimingsMS: {
-    afterFetch: number[] | object[];
-    fetch: number[];
-    _request: number[];
-  };
-  query: string;
-  serverTimeMS: number;
-};
+// const onTimeAgo = () => {};
 
 function App() {
-  const [selectedValue, setSelectedValue] = useState<string>("react");
+  const [selectedValue, setSelectedValue] = useState<string>("reactjs");
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState<DataType>();
 
@@ -78,6 +35,8 @@ function App() {
     fetchData(param);
     setData(await fetchData(param));
   };
+
+  // onSelectOption("reactjs");
 
   return (
     <>
@@ -104,12 +63,12 @@ function App() {
               />
 
               <SelectorOption
-                children={"react"}
+                children={"reactjs"}
                 onClick={() => onSelectOption("reactjs")}
               />
 
               <SelectorOption
-                children={"vue"}
+                children={"vuejs"}
                 onClick={() => onSelectOption("vuejs")}
               />
             </ContainOptions>
