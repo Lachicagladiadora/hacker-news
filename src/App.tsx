@@ -23,10 +23,6 @@ const fetchData = async (param: string) => {
   return dataValue;
 };
 
-const onTimeAgo = (param: string): string => {
-  const currentDate: Date = new Date();
-  const createDate: Date = new Date(param);
-};
 // todo : use library for get time
 
 function App() {
