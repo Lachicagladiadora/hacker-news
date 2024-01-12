@@ -18,7 +18,7 @@ export const Paragraph = ({ time, author, text }: ParagraphProps) => {
           height={ImageSize.S}
           style={{ marginRight: "10px" }}
         />
-        {time} ago by {author}
+        {time} by {author}
       </DivTime>
       <p>{text}</p>
     </ParagraphStyle>

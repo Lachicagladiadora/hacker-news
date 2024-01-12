@@ -87,7 +87,7 @@ function App() {
           {data?.hits.map((cur, idx) => (
             <Article key={idx}>
               <Paragraph
-                time={timeAgo.format(Date.now() - Number(cur.created_at))}
+                time={timeAgo.format(Date.parse(cur.created_at))}
                 author={cur.author}
                 text={cur.story_title}
               />
