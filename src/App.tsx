@@ -11,6 +11,8 @@ import { SectionForArticles } from "./components/style/SectionForArticles";
 import { SectionForSelector } from "./components/style/SectionForSelector";
 import { Paragraph } from "./components/ParagraphWrapper";
 import { DataType } from "./types";
+import TimeAgo from "javascript-time-ago";
+import en from "javascript-time-ago/locale/en";
 
 const URL = "https://hn.algolia.com/api/v1/search_by_date";
 
@@ -23,6 +25,9 @@ const fetchData = async (param: string) => {
   return dataValue;
 };
 
+TimeAgo.addDefaultLocale(en);
+
+const timeAgo = new TimeAgo("en-US");
 // todo : use library for get time
 
 function App() {
@@ -34,6 +39,10 @@ function App() {
     setSelectedValue(param);
     fetchData(param);
     setData(await fetchData(param));
+  };
+
+  const createdDate = (param: string): number => {
+    param.get;
   };
 
   // onSelectOption("reactjs");
@@ -78,7 +87,7 @@ function App() {
           {data?.hits.map((cur, idx) => (
             <Article key={idx}>
               <Paragraph
-                time={cur.created_at}
+                time={timeAgo.format(Date.now() - Number(cur.created_at))}
                 author={cur.author}
                 text={cur.story_title}
               />
