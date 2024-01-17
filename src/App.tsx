@@ -41,9 +41,13 @@ function App() {
     setData(await fetchData(param));
   };
 
-  const createdDate = (param: string): number => {
-    param.get;
-  };
+  async () => setData(await fetchData("reactjs"));
+  // selectedValue === "reactjs"
+  //   ? () => onSelectOption("reactjs")
+  //   : console.log("not data");
+  // const createdDate = (param: string): number => {
+  //   param.get;
+  // };
 
   // onSelectOption("reactjs");
 

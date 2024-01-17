@@ -10,6 +10,7 @@ export const ParagraphStyle = styled.div`
   font-size: 14px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   line-height: 20px;
   &:hover {
     opacity: 0.6;
