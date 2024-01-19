@@ -1,20 +1,22 @@
-import { useState } from "react";
 import { ArticleStyle } from "./style/ArticleStyle";
 import { IconButton } from "./IconButton";
 import { ImageSize } from "../constants";
 
 type ArticleProps = {
   children: string | JSX.Element;
+  fave: boolean;
+  setFave: React.Dispatch<React.SetStateAction<boolean>>;
+  onClick: () => void;
 };
 
-export const Article = ({ children }: ArticleProps) => {
-  const [faves, setFaves] = useState(false);
+export const Article = ({ children, fave, setFave, onClick }: ArticleProps) => {
+  // const [faves, setFaves] = useState(false);
   return (
     <ArticleStyle>
       {children}
-      <IconButton onClick={() => setFaves((prev) => !prev)}>
+      <IconButton onClick={onClick}>
         <>
-          {!faves && (
+          {!fave && (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -27,7 +29,7 @@ export const Article = ({ children }: ArticleProps) => {
               ></path>
             </svg>
           )}
-          {faves && (
+          {fave && (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"

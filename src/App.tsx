@@ -28,12 +28,14 @@ const fetchData = async (param: string) => {
 TimeAgo.addDefaultLocale(en);
 
 const timeAgo = new TimeAgo("en-US");
-// todo : use library for get time
+
+const INITIAL_DATA: DataType = await fetchData("reactjs");
 
 function App() {
   const [selectedValue, setSelectedValue] = useState<string>("reactjs");
   const [visible, setVisible] = useState(false);
-  const [data, setData] = useState<DataType>();
+  const [data, setData] = useState<DataType>(INITIAL_DATA);
+  const [myFaves, setMyFaves] = useState<DataType>(INITIAL_DATA);
 
   const onSelectOption = async (param: string) => {
     setSelectedValue(param);
@@ -41,15 +43,7 @@ function App() {
     setData(await fetchData(param));
   };
 
-  async () => setData(await fetchData("reactjs"));
-  // selectedValue === "reactjs"
-  //   ? () => onSelectOption("reactjs")
-  //   : console.log("not data");
-  // const createdDate = (param: string): number => {
-  //   param.get;
-  // };
-
-  // onSelectOption("reactjs");
+  // async () => setData(await fetchData("reactjs"));
 
   return (
     <>
@@ -62,7 +56,7 @@ function App() {
           >
             All
           </Button>
-          <Button onClick={() => console.log("My faves")}>My faves</Button>
+          <Button onClick={() => setData(myFaves)}>My faves</Button>
         </SectionForButtons>
         <SectionForSelector>
           <Selector
