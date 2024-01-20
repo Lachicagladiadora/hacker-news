@@ -35,6 +35,7 @@ function App() {
   const [selectedValue, setSelectedValue] = useState<string>("reactjs");
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState<DataType>(INITIAL_DATA);
+  const [fave, setFave] = useState(false);
   const [myFaves, setMyFaves] = useState<DataType>(INITIAL_DATA);
 
   const onSelectOption = async (param: string) => {
@@ -83,7 +84,11 @@ function App() {
         </SectionForSelector>
         <SectionForArticles>
           {data?.hits.map((cur, idx) => (
-            <Article key={idx}>
+            <Article
+              key={idx}
+              fave={idx === idx ? fave : false}
+              setFave={idx === idx ? setFave : () => setFave(false)}
+            >
               <Paragraph
                 time={timeAgo.format(Date.parse(cur.created_at))}
                 author={cur.author}

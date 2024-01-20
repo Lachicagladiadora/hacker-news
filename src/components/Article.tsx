@@ -6,15 +6,15 @@ type ArticleProps = {
   children: string | JSX.Element;
   fave: boolean;
   setFave: React.Dispatch<React.SetStateAction<boolean>>;
-  onClick: () => void;
+  // onClick: () => void;
 };
 
-export const Article = ({ children, fave, setFave, onClick }: ArticleProps) => {
+export const Article = ({ children, fave, setFave }: ArticleProps) => {
   // const [faves, setFaves] = useState(false);
   return (
     <ArticleStyle>
       {children}
-      <IconButton onClick={onClick}>
+      <IconButton onClick={() => setFave((prev) => !prev)}>
         <>
           {!fave && (
             <svg
