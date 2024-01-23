@@ -88,6 +88,7 @@ function App() {
               key={idx}
               fave={fave}
               onClick={() => setFave((prev) => !prev)}
+              title="Add to faves"
             >
               <ParagraphWrapper
                 url={cur.story_url}
