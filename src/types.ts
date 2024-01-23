@@ -1,4 +1,4 @@
-type ArticleType = {
+export type ArticleType = {
   author: string;
   comment_text: string;
   created_at: string;
@@ -16,6 +16,7 @@ type ArticleType = {
     story_url: object;
   };
   _tags: string[];
+  fave?: boolean;
 };
 
 export type DataType = {

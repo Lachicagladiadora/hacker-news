@@ -9,7 +9,7 @@ import { SectionForButtons } from "./components/style/SectionForButtons";
 import { ContainOptions } from "./components/style/SelectorStyle";
 import { SectionForArticles } from "./components/style/SectionForArticles";
 import { SectionForSelector } from "./components/style/SectionForSelector";
-import { Paragraph } from "./components/ParagraphWrapper";
+import { ParagraphWrapper } from "./components/ParagraphWrapper";
 import { DataType } from "./types";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
@@ -25,7 +25,7 @@ const fetchData = async (param: string) => {
   return dataValue;
 };
 
-TimeAgo.addDefaultLocale(en);
+TimeAgo.addLocale(en);
 
 const timeAgo = new TimeAgo("en-US");
 
@@ -86,10 +86,11 @@ function App() {
           {data?.hits.map((cur, idx) => (
             <Article
               key={idx}
-              fave={idx === idx ? fave : false}
-              setFave={idx === idx ? setFave : () => setFave(false)}
+              fave={fave}
+              onClick={() => setFave((prev) => !prev)}
             >
-              <Paragraph
+              <ParagraphWrapper
+                url={cur.story_url}
                 time={timeAgo.format(Date.parse(cur.created_at))}
                 author={cur.author}
                 text={cur.story_title}

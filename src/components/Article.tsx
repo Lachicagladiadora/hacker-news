@@ -5,16 +5,16 @@ import { ImageSize } from "../constants";
 type ArticleProps = {
   children: string | JSX.Element;
   fave: boolean;
-  setFave: React.Dispatch<React.SetStateAction<boolean>>;
-  // onClick: () => void;
+  // setFave: React.Dispatch<React.SetStateAction<boolean>>;
+  onClick: () => void;
 };
 
-export const Article = ({ children, fave, setFave }: ArticleProps) => {
+export const Article = ({ children, fave, onClick }: ArticleProps) => {
   // const [faves, setFaves] = useState(false);
   return (
     <ArticleStyle>
       {children}
-      <IconButton onClick={() => setFave((prev) => !prev)}>
+      <IconButton onClick={onClick}>
         <>
           {!fave && (
             <svg
