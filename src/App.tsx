@@ -10,7 +10,7 @@ import { ContainOptions } from "./components/style/SelectorStyle";
 import { SectionForArticles } from "./components/style/SectionForArticles";
 import { SectionForSelector } from "./components/style/SectionForSelector";
 import { ParagraphWrapper } from "./components/ParagraphWrapper";
-import { DataType } from "./types";
+import { ArticleType, DataType } from "./types";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 
@@ -19,7 +19,6 @@ const URL = "https://hn.algolia.com/api/v1/search_by_date";
 const fetchData = async (param: string) => {
   const urlWithParams = param ? `${URL}?query=${param}` : URL;
   const data = await fetch(urlWithParams);
-  console.log({ data });
   const dataValue = await data.json();
   console.log({ dataValue });
   return dataValue;
@@ -36,7 +35,7 @@ function App() {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState<DataType>(INITIAL_DATA);
   const [fave, setFave] = useState(false);
-  const [myFaves, setMyFaves] = useState<DataType>(INITIAL_DATA);
+  const [myFaves, setMyFaves] = useState<DataType>({ hits: [] });
 
   const onSelectOption = async (param: string) => {
     setSelectedValue(param);
@@ -44,7 +43,24 @@ function App() {
     setData(await fetchData(param));
   };
 
-  // async () => setData(await fetchData("reactjs"));
+  const onClickAllButton = async (param: string) => {
+    if (!param) return;
+    setData(await fetchData(param));
+  };
+
+  const onAddFave = (param: ArticleType): void => {
+    // TODO: fix funtion for add to 'myFaves'
+    console.log("added fave");
+    console.log({ myFaves });
+    console.log({ param });
+    if (param.is_fave === fave) {
+      setFave((prev) => !prev);
+      console.log({ myFaves });
+      param.is_fave === true
+        ? setMyFaves((prev): DataType => prev.hits.push(param))
+        : console.log("error from param");
+    }
+  };
 
   return (
     <>
@@ -53,7 +69,7 @@ function App() {
         <SectionForButtons>
           <Button
             id="button-all"
-            onClick={() => onClickAllButton("button-all")}
+            onClick={() => onClickAllButton(selectedValue)}
           >
             All
           </Button>
@@ -83,18 +99,23 @@ function App() {
           </Selector>
         </SectionForSelector>
         <SectionForArticles>
-          {data?.hits.map((cur, idx) => (
+          {/* {!data && <p>Loading</p>} */}
+          {data.hits.map((cur, idx) => (
             <Article
               key={idx}
               fave={fave}
-              onClick={() => setFave((prev) => !prev)}
               title="Add to faves"
+              onClick={() => onAddFave(cur)}
             >
               <ParagraphWrapper
-                url={cur.story_url}
-                time={timeAgo.format(Date.parse(cur.created_at))}
+                url={cur.story_url || cur._highlightResult?.story_url}
+                time={timeAgo.format(Date.parse(String(cur.created_at)))}
                 author={cur.author}
-                text={cur.story_title}
+                title={
+                  typeof cur.story_title === "string"
+                    ? cur.story_title
+                    : cur.title
+                }
               />
             </Article>
           ))}
@@ -105,11 +126,3 @@ function App() {
 }
 
 export default App;
-
-const onClickAllButton = (id: string) => {
-  if (!id) return;
-  else {
-    console.log("all");
-    document.getElementById("button-all")?.focus();
-  }
-};

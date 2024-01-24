@@ -3,16 +3,16 @@ import { DivTime } from "./style/DivTime";
 import { ParagraphStyle } from "./style/ParagraphWrapperStyle";
 
 type ParagraphWrapperProps = {
-  time: string;
-  author: string;
-  text: string;
-  url: string;
+  time: string | undefined;
+  author: string | undefined;
+  title: string | undefined;
+  url: string | undefined;
 };
 
 export const ParagraphWrapper = ({
   time,
   author,
-  text,
+  title,
   url,
 }: ParagraphWrapperProps) => {
   return (
@@ -26,7 +26,7 @@ export const ParagraphWrapper = ({
         />
         {time} by {author}
       </DivTime>
-      <p>{text}</p>
+      <p>{title}</p>
     </ParagraphStyle>
   );
 };
