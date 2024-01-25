@@ -10,7 +10,7 @@ import { ContainOptions } from "./components/style/SelectorStyle";
 import { SectionForArticles } from "./components/style/SectionForArticles";
 import { SectionForSelector } from "./components/style/SectionForSelector";
 import { ParagraphWrapper } from "./components/ParagraphWrapper";
-import { ArticleType, DataType } from "./types";
+import { Story, DataType } from "./types";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 
@@ -34,32 +34,39 @@ function App() {
   const [selectedValue, setSelectedValue] = useState<string>("reactjs");
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState<DataType>(INITIAL_DATA);
-  const [fave, setFave] = useState(false);
-  const [myFaves, setMyFaves] = useState<DataType>({ hits: [] });
+  // const [fave, setFave] = useState(false);
+  const [myFaves, setMyFaves] = useState<Story[]>([]);
 
-  const onSelectOption = async (param: string) => {
+  const onChangeProgrammingLanguage = async (param: string) => {
     setSelectedValue(param);
-    fetchData(param);
-    setData(await fetchData(param));
+    const newData = await fetchData(param); // change data for news
+    setData(newData);
   };
 
-  const onClickAllButton = async (param: string) => {
+  const onDisplayAllNews = async (param: string) => {
     if (!param) return;
-    setData(await fetchData(param));
+
+    const news = await fetchData(param);
+    setData(news);
   };
 
-  const onAddFave = (param: ArticleType): void => {
+  const onToggleFave = (article: Story): void => {
     // TODO: fix funtion for add to 'myFaves'
     console.log("added fave");
     console.log({ myFaves });
-    console.log({ param });
-    if (param.is_fave === fave) {
-      setFave((prev) => !prev);
+    console.log({ param: article });
+    const myFavesIds = myFaves.map((c) => c.story_id);
+    if (myFavesIds.includes(article.story_id)) {
+      setMyFaves((prev) => prev.filter((c) => c.story_id !== article.story_id));
       console.log({ myFaves });
-      param.is_fave === true
-        ? setMyFaves((prev): DataType => prev.hits.push(param))
-        : console.log("error from param");
+    } else {
+      setMyFaves((prev) => [article, ...prev]);
     }
+  };
+
+  const storyIsFave = (article: Story) => {
+    const myFavesIds = myFaves.map((c) => c.story_id);
+    return myFavesIds.includes(article.story_id) ? true : false;
   };
 
   return (
@@ -69,8 +76,8 @@ function App() {
         <SectionForButtons>
           <Button
             id="button-all"
-            focus={selectedValue ? true : false}
-            onClick={() => onClickAllButton(selectedValue)}
+            // focus={selectedValue ? true : false}
+            onClick={() => onDisplayAllNews(selectedValue)}
           >
             All
           </Button>
@@ -80,21 +87,22 @@ function App() {
           <Selector
             value={selectedValue}
             onClick={() => setVisible((prev) => !prev)}
+            //change onclick for onchange in selector
           >
             <ContainOptions $visibility={visible ? "visible" : "hidden"}>
               <SelectorOption
                 children={"angular"}
-                onClick={() => onSelectOption("angular")}
+                onClick={() => onChangeProgrammingLanguage("angular")}
               />
 
               <SelectorOption
                 children={"reactjs"}
-                onClick={() => onSelectOption("reactjs")}
+                onClick={() => onChangeProgrammingLanguage("reactjs")}
               />
 
               <SelectorOption
                 children={"vuejs"}
-                onClick={() => onSelectOption("vuejs")}
+                onClick={() => onChangeProgrammingLanguage("vuejs")}
               />
             </ContainOptions>
           </Selector>
@@ -104,9 +112,9 @@ function App() {
           {data.hits.map((cur, idx) => (
             <Article
               key={idx}
-              fave={fave}
+              fave={storyIsFave(cur)}
               title="Add to faves"
-              onClick={() => onAddFave(cur)}
+              onClick={() => onToggleFave(cur)}
             >
               <ParagraphWrapper
                 url={cur.story_url || cur._highlightResult?.story_url}

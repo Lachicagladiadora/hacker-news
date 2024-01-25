@@ -1,4 +1,4 @@
-export type ArticleType = {
+export type Story = {
   author?: string;
   comment_text?: string;
   created_at?: string;
@@ -17,14 +17,13 @@ export type ArticleType = {
     story_url: string;
   };
   _tags?: string[];
-  is_fave?: boolean;
 };
 
 export type DataType = {
   exhaustive?: { nbHits: boolean; typo: boolean };
   exhaustiveNbHits?: boolean;
   exhaustiveTypo?: boolean;
-  hits: ArticleType[];
+  hits: Story[];
   hitsPerPage?: number;
   nbHits?: number;
   nbPages?: number;
