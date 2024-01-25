@@ -69,6 +69,7 @@ function App() {
         <SectionForButtons>
           <Button
             id="button-all"
+            focus={selectedValue ? true : false}
             onClick={() => onClickAllButton(selectedValue)}
           >
             All
