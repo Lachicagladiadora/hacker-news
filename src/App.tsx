@@ -21,7 +21,7 @@ const fetchData = async (param: string) => {
   const data = await fetch(urlWithParams);
   const dataValue = await data.json();
   console.log({ dataValue });
-  return dataValue;
+  return !dataValue ? "Loading..." : dataValue;
 };
 
 TimeAgo.addLocale(en);
@@ -33,32 +33,31 @@ const INITIAL_DATA: DataType = await fetchData("reactjs");
 function App() {
   const [selectedValue, setSelectedValue] = useState<string>("reactjs");
   const [visible, setVisible] = useState(false);
-  const [data, setData] = useState<DataType>(INITIAL_DATA);
-  // const [fave, setFave] = useState(false);
+  const [news, setNews] = useState<DataType>(INITIAL_DATA);
   const [myFaves, setMyFaves] = useState<Story[]>([]);
+  const [displayFaves, setDisplayFaves] = useState(false);
 
   const onChangeProgrammingLanguage = async (param: string) => {
+    if (!param) return;
+
     setSelectedValue(param);
-    const newData = await fetchData(param); // change data for news
-    setData(newData);
+    const newStory = await fetchData(param);
+    setNews(newStory);
+    onDisplayAllNews(param);
   };
 
   const onDisplayAllNews = async (param: string) => {
     if (!param) return;
 
+    setDisplayFaves(false);
     const news = await fetchData(param);
-    setData(news);
+    setNews(news);
   };
 
   const onToggleFave = (article: Story): void => {
-    // TODO: fix funtion for add to 'myFaves'
-    console.log("added fave");
-    console.log({ myFaves });
-    console.log({ param: article });
     const myFavesIds = myFaves.map((c) => c.story_id);
     if (myFavesIds.includes(article.story_id)) {
       setMyFaves((prev) => prev.filter((c) => c.story_id !== article.story_id));
-      console.log({ myFaves });
     } else {
       setMyFaves((prev) => [article, ...prev]);
     }
@@ -76,18 +75,21 @@ function App() {
         <SectionForButtons>
           <Button
             id="button-all"
-            // focus={selectedValue ? true : false}
+            focus={true}
             onClick={() => onDisplayAllNews(selectedValue)}
           >
             All
           </Button>
-          <Button onClick={() => setData(myFaves)}>My faves</Button>
+          <Button onClick={() => setDisplayFaves((prev) => !prev)}>
+            My faves
+          </Button>
         </SectionForButtons>
         <SectionForSelector>
           <Selector
             value={selectedValue}
             onClick={() => setVisible((prev) => !prev)}
             //change onclick for onchange in selector
+            //if change onclick for onchange , not function
           >
             <ContainOptions $visibility={visible ? "visible" : "hidden"}>
               <SelectorOption
@@ -108,26 +110,53 @@ function App() {
           </Selector>
         </SectionForSelector>
         <SectionForArticles>
-          {/* {!data && <p>Loading</p>} */}
-          {data.hits.map((cur, idx) => (
-            <Article
-              key={idx}
-              fave={storyIsFave(cur)}
-              title="Add to faves"
-              onClick={() => onToggleFave(cur)}
-            >
-              <ParagraphWrapper
-                url={cur.story_url || cur._highlightResult?.story_url}
-                time={timeAgo.format(Date.parse(String(cur.created_at)))}
-                author={cur.author}
-                title={
-                  typeof cur.story_title === "string"
-                    ? cur.story_title
-                    : cur.title
-                }
-              />
-            </Article>
-          ))}
+          {displayFaves && myFaves.length === 0 && (
+            <p>... You don't have faves ...</p>
+          )}
+          {<p>Loading...</p> &&
+            displayFaves &&
+            myFaves.length > 0 &&
+            myFaves.map((cur, idx) => (
+              <Article
+                key={idx}
+                fave={storyIsFave(cur)}
+                title="Add to faves"
+                onClick={() => onToggleFave(cur)}
+              >
+                <ParagraphWrapper
+                  url={cur.story_url || cur._highlightResult?.story_url}
+                  time={timeAgo.format(Date.parse(String(cur.created_at)))}
+                  author={cur.author}
+                  title={
+                    typeof cur.story_title === "string"
+                      ? cur.story_title
+                      : cur.title
+                  }
+                />
+              </Article>
+            ))}
+          {(typeof news === "string" && <p>Loading... </p>) ||
+            (typeof news !== "string" &&
+              !displayFaves &&
+              news.hits.map((cur, idx) => (
+                <Article
+                  key={idx}
+                  fave={storyIsFave(cur)}
+                  title="Add to faves"
+                  onClick={() => onToggleFave(cur)}
+                >
+                  <ParagraphWrapper
+                    url={cur.story_url || cur._highlightResult?.story_url}
+                    time={timeAgo.format(Date.parse(String(cur.created_at)))}
+                    author={cur.author}
+                    title={
+                      typeof cur.story_title === "string"
+                        ? cur.story_title
+                        : cur.title
+                    }
+                  />
+                </Article>
+              )))}
         </SectionForArticles>
       </Main>
     </>
