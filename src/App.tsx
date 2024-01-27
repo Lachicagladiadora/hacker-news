@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useIntersection } from "./hooks/useIntersection";
+
 import { Article } from "./components/Article";
 import { Button } from "./components/Button";
 import { Header } from "./components/Header";
@@ -11,13 +13,32 @@ import { SectionForArticles } from "./components/style/SectionForArticles";
 import { SectionForSelector } from "./components/style/SectionForSelector";
 import { ParagraphWrapper } from "./components/ParagraphWrapper";
 import { Story, DataType } from "./types";
+
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 
-const URL = "https://hn.algolia.com/api/v1/search_by_date";
+let newPage = 0;
 
-const fetchData = async (param: string) => {
-  const urlWithParams = param ? `${URL}?query=${param}` : URL;
+type pathProps = { param: string; page?: number };
+
+const getPath = ({ param }: pathProps): string => {
+  const URL = "https://hn.algolia.com/api/v1/search_by_date";
+  newPage += 1;
+  return `${URL}?query=${param}&page=${newPage}`;
+};
+
+console.log(getPath({ param: "angular", page: 6 }));
+
+const fetchData = async (param: string, page: number) => {
+  const urlWithParams = getPath({ param: param, page: page });
+  const data = await fetch(urlWithParams);
+  const dataValue = await data.json();
+  console.log({ dataValue });
+  return !dataValue ? "Loading..." : dataValue;
+};
+
+const fetchDataForPage = async (param: string, page: number) => {
+  const urlWithParams = getPath({ param: param, page: page });
   const data = await fetch(urlWithParams);
   const dataValue = await data.json();
   console.log({ dataValue });
@@ -28,7 +49,7 @@ TimeAgo.addLocale(en);
 
 const timeAgo = new TimeAgo("en-US");
 
-const INITIAL_DATA: DataType = await fetchData("reactjs");
+const INITIAL_DATA: DataType = await fetchData("reactjs", newPage);
 
 function App() {
   const [selectedValue, setSelectedValue] = useState<string>("reactjs");
@@ -37,11 +58,17 @@ function App() {
   const [myFaves, setMyFaves] = useState<Story[]>([]);
   const [displayFaves, setDisplayFaves] = useState(false);
 
+  const [elementRef, isIntersection] = useIntersection({});
+
+  const finalData: DataType = async () =>
+    await fetchDataForPage(selectedValue, newPage);
+  // todo: fix type of promise
+
   const onChangeProgrammingLanguage = async (param: string) => {
     if (!param) return;
 
     setSelectedValue(param);
-    const newStory = await fetchData(param);
+    const newStory = await fetchData(param, newPage);
     setNews(newStory);
     onDisplayAllNews(param);
   };
@@ -50,7 +77,7 @@ function App() {
     if (!param) return;
 
     setDisplayFaves(false);
-    const news = await fetchData(param);
+    const news = await fetchData(param, newPage);
     setNews(news);
   };
 
@@ -88,8 +115,6 @@ function App() {
           <Selector
             value={selectedValue}
             onClick={() => setVisible((prev) => !prev)}
-            //change onclick for onchange in selector
-            //if change onclick for onchange , not function
           >
             <ContainOptions $visibility={visible ? "visible" : "hidden"}>
               <SelectorOption
@@ -109,6 +134,7 @@ function App() {
             </ContainOptions>
           </Selector>
         </SectionForSelector>
+
         <SectionForArticles>
           {displayFaves && myFaves.length === 0 && (
             <p>... You don't have faves ...</p>
@@ -157,6 +183,33 @@ function App() {
                   />
                 </Article>
               )))}
+          <div
+            ref={elementRef}
+            style={{ background: `${isIntersection ? "green" : "red"}` }}
+          >
+            {isIntersection
+              ? !displayFaves &&
+                finalData.hits.map((cur, idx) => (
+                  <Article
+                    key={idx}
+                    fave={storyIsFave(cur)}
+                    title="Add to faves"
+                    onClick={() => onToggleFave(cur)}
+                  >
+                    <ParagraphWrapper
+                      url={cur.story_url || cur._highlightResult?.story_url}
+                      time={timeAgo.format(Date.parse(String(cur.created_at)))}
+                      author={cur.author}
+                      title={
+                        typeof cur.story_title === "string"
+                          ? cur.story_title
+                          : cur.title
+                      }
+                    />
+                  </Article>
+                ))
+              : "loading"}
+          </div>
         </SectionForArticles>
       </Main>
     </>
