@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useIntersection } from "./hooks/useIntersection";
 
 import { Article } from "./components/Article";
@@ -17,19 +17,17 @@ import { Story, DataType } from "./types";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 
-let newPage = 0;
-
 type pathProps = { param: string; page?: number };
 
-const getPath = ({ param }: pathProps): string => {
+const getPath = ({ param, page }: pathProps): string => {
   const URL = "https://hn.algolia.com/api/v1/search_by_date";
-  newPage += 1;
-  return `${URL}?query=${param}&page=${newPage}`;
+  if (!page) return `${URL}?query=${param}`;
+  return `${URL}?query=${param}&page=${page}`;
 };
 
 console.log(getPath({ param: "angular", page: 6 }));
 
-const fetchData = async (param: string, page: number) => {
+const fetchData = async (param: string, page: number): Promise<DataType> => {
   const urlWithParams = getPath({ param: param, page: page });
   const data = await fetch(urlWithParams);
   const dataValue = await data.json();
@@ -37,7 +35,10 @@ const fetchData = async (param: string, page: number) => {
   return !dataValue ? "Loading..." : dataValue;
 };
 
-const fetchDataForPage = async (param: string, page: number) => {
+const fetchDataForPage = async (
+  param: string,
+  page: number
+): Promise<DataType> => {
   const urlWithParams = getPath({ param: param, page: page });
   const data = await fetch(urlWithParams);
   const dataValue = await data.json();
@@ -49,27 +50,36 @@ TimeAgo.addLocale(en);
 
 const timeAgo = new TimeAgo("en-US");
 
-const INITIAL_DATA: DataType = await fetchData("reactjs", newPage);
-
 function App() {
   const [selectedValue, setSelectedValue] = useState<string>("reactjs");
   const [visible, setVisible] = useState(false);
-  const [news, setNews] = useState<DataType>(INITIAL_DATA);
+  const [news, setNews] = useState<Story[]>([]);
+  const [pageInformation, setPageInformation] = useState<{
+    currentPage: number;
+    totalPages: number;
+  }>({ currentPage: 1, totalPages: 0 });
   const [myFaves, setMyFaves] = useState<Story[]>([]);
   const [displayFaves, setDisplayFaves] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [elementRef, isIntersection] = useIntersection({});
 
-  const finalData: DataType = async () =>
-    await fetchDataForPage(selectedValue, newPage);
-  // todo: fix type of promise
+  // const getFinalData = async (): Promise<Story[]> => {
+  //   const data = await fetchDataForPage(selectedValue, newPage);
+  //   return data.hits
+  // };
 
   const onChangeProgrammingLanguage = async (param: string) => {
     if (!param) return;
 
     setSelectedValue(param);
-    const newStory = await fetchData(param, newPage);
-    setNews(newStory);
+    setIsLoading(true);
+    const newStory = await fetchData(param, 1);
+    setIsLoading(false);
+    setPageInformation({
+      currentPage: newStory.page,
+      totalPages: newStory.nbPages,
+    });
+    setNews(newStory.hits);
     onDisplayAllNews(param);
   };
 
@@ -77,8 +87,14 @@ function App() {
     if (!param) return;
 
     setDisplayFaves(false);
-    const news = await fetchData(param, newPage);
-    setNews(news);
+    setIsLoading(true);
+    const news = await fetchData(param, pageInformation.currentPage);
+    setIsLoading(false);
+    setPageInformation({
+      currentPage: news.page,
+      totalPages: news.nbPages,
+    });
+    setNews(news.hits);
   };
 
   const onToggleFave = (article: Story): void => {
@@ -95,10 +111,30 @@ function App() {
     return myFavesIds.includes(article.story_id) ? true : false;
   };
 
+  const getNextNewsPage = useCallback(async () => {
+    setIsLoading(true);
+    const data = await fetchDataForPage(
+      selectedValue,
+      pageInformation.currentPage
+    );
+    setIsLoading(false);
+    setPageInformation({ currentPage: data.page, totalPages: data.nbPages });
+    setNews((prev) => {
+      return [...prev, ...data.hits];
+    });
+  }, [setNews, selectedValue, pageInformation]);
+
+  useEffect(() => {
+    if (!isIntersection) return;
+    if (isLoading) return; // TODO:porque es necesario esta linea
+    getNextNewsPage();
+  }, [isIntersection, getNextNewsPage, isLoading]);
+
   return (
     <>
       <Header>Hacker News</Header>
       <Main>
+        {/* {isLoading ? "true" : "false"} */}
         <SectionForButtons>
           <Button
             id="button-all"
@@ -136,10 +172,10 @@ function App() {
         </SectionForSelector>
 
         <SectionForArticles>
-          {displayFaves && myFaves.length === 0 && (
+          {!isLoading && displayFaves && myFaves.length === 0 && (
             <p>... You don't have faves ...</p>
           )}
-          {<p>Loading...</p> &&
+          {!isLoading &&
             displayFaves &&
             myFaves.length > 0 &&
             myFaves.map((cur, idx) => (
@@ -161,55 +197,32 @@ function App() {
                 />
               </Article>
             ))}
-          {(typeof news === "string" && <p>Loading... </p>) ||
-            (typeof news !== "string" &&
-              !displayFaves &&
-              news.hits.map((cur, idx) => (
-                <Article
-                  key={idx}
-                  fave={storyIsFave(cur)}
-                  title="Add to faves"
-                  onClick={() => onToggleFave(cur)}
-                >
-                  <ParagraphWrapper
-                    url={cur.story_url || cur._highlightResult?.story_url}
-                    time={timeAgo.format(Date.parse(String(cur.created_at)))}
-                    author={cur.author}
-                    title={
-                      typeof cur.story_title === "string"
-                        ? cur.story_title
-                        : cur.title
-                    }
-                  />
-                </Article>
-              )))}
-          <div
-            ref={elementRef}
-            style={{ background: `${isIntersection ? "green" : "red"}` }}
-          >
-            {isIntersection
-              ? !displayFaves &&
-                finalData.hits.map((cur, idx) => (
-                  <Article
-                    key={idx}
-                    fave={storyIsFave(cur)}
-                    title="Add to faves"
-                    onClick={() => onToggleFave(cur)}
-                  >
-                    <ParagraphWrapper
-                      url={cur.story_url || cur._highlightResult?.story_url}
-                      time={timeAgo.format(Date.parse(String(cur.created_at)))}
-                      author={cur.author}
-                      title={
-                        typeof cur.story_title === "string"
-                          ? cur.story_title
-                          : cur.title
-                      }
-                    />
-                  </Article>
-                ))
-              : "loading"}
-          </div>
+          {!isLoading && Boolean(!news.length) && <p>Again try letter... </p>}
+          {!isLoading &&
+            Boolean(news.length) &&
+            !displayFaves &&
+            news.map((cur, idx) => (
+              <Article
+                key={idx}
+                fave={storyIsFave(cur)}
+                title="Add to faves"
+                onClick={() => onToggleFave(cur)}
+              >
+                <ParagraphWrapper
+                  url={cur.story_url || cur._highlightResult?.story_url}
+                  time={timeAgo.format(Date.parse(String(cur.created_at)))}
+                  author={cur.author}
+                  title={
+                    typeof cur.story_title === "string"
+                      ? cur.story_title
+                      : cur.title
+                  }
+                />
+              </Article>
+            ))}
+
+          {isLoading && <p>Loading...</p>}
+          {!displayFaves && <div ref={elementRef} />}
         </SectionForArticles>
       </Main>
     </>

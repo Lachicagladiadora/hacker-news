@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 
-export const useIntersection = (options = {}) => {
+type UseIntersectionOutput = [
+  React.MutableRefObject<HTMLDivElement | null>,
+  boolean
+];
+
+export const useIntersection = (options = {}): UseIntersectionOutput => {
   const [isIntersecting, setIsIntersecting] = useState(false);
-  const elementRef = useRef();
+  const elementRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const element = elementRef.current;
@@ -21,7 +26,7 @@ export const useIntersection = (options = {}) => {
         observer.unobserve(element);
       }
     };
-  }, []);
+  }, [options]);
 
   return [elementRef, isIntersecting];
 };
