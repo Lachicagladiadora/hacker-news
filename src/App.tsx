@@ -25,14 +25,11 @@ const getPath = ({ param, page }: pathProps): string => {
   return `${URL}?query=${param}&page=${page}`;
 };
 
-console.log(getPath({ param: "angular", page: 6 }));
-
 const fetchData = async (param: string, page: number): Promise<DataType> => {
   const urlWithParams = getPath({ param: param, page: page });
   const data = await fetch(urlWithParams);
   const dataValue = await data.json();
-  console.log({ dataValue });
-  return !dataValue ? "Loading..." : dataValue;
+  return dataValue;
 };
 
 const fetchDataForPage = async (
@@ -42,8 +39,7 @@ const fetchDataForPage = async (
   const urlWithParams = getPath({ param: param, page: page });
   const data = await fetch(urlWithParams);
   const dataValue = await data.json();
-  console.log({ dataValue });
-  return !dataValue ? "Loading..." : dataValue;
+  return dataValue;
 };
 
 TimeAgo.addLocale(en);
@@ -61,12 +57,9 @@ function App() {
   const [myFaves, setMyFaves] = useState<Story[]>([]);
   const [displayFaves, setDisplayFaves] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [elementRef, isIntersection] = useIntersection({});
+  const [elementRef, isIntersection] = useIntersection({ threshold: 0.5 });
 
-  // const getFinalData = async (): Promise<Story[]> => {
-  //   const data = await fetchDataForPage(selectedValue, newPage);
-  //   return data.hits
-  // };
+  console.log(pageInformation);
 
   const onChangeProgrammingLanguage = async (param: string) => {
     if (!param) return;
@@ -75,14 +68,16 @@ function App() {
     setIsLoading(true);
     const newStory = await fetchData(param, 1);
     setIsLoading(false);
+    console.log({ pageInformation });
     setPageInformation({
-      currentPage: newStory.page,
+      currentPage: 2,
       totalPages: newStory.nbPages,
     });
     setNews(newStory.hits);
     onDisplayAllNews(param);
   };
 
+  console.log({ pageInformation });
   const onDisplayAllNews = async (param: string) => {
     if (!param) return;
 
@@ -90,8 +85,9 @@ function App() {
     setIsLoading(true);
     const news = await fetchData(param, pageInformation.currentPage);
     setIsLoading(false);
+    console.log({ pageInformation });
     setPageInformation({
-      currentPage: news.page,
+      currentPage: (news.page += 1),
       totalPages: news.nbPages,
     });
     setNews(news.hits);
@@ -118,7 +114,10 @@ function App() {
       pageInformation.currentPage
     );
     setIsLoading(false);
-    setPageInformation({ currentPage: data.page, totalPages: data.nbPages });
+    setPageInformation({
+      currentPage: (data.page += 1),
+      totalPages: data.nbPages,
+    });
     setNews((prev) => {
       return [...prev, ...data.hits];
     });
@@ -134,7 +133,8 @@ function App() {
     <>
       <Header>Hacker News</Header>
       <Main>
-        {/* {isLoading ? "true" : "false"} */}
+        {isLoading ? "true" : "false"}
+        {pageInformation ? pageInformation.currentPage : "not exist"}
         <SectionForButtons>
           <Button
             id="button-all"
@@ -220,9 +220,9 @@ function App() {
                 />
               </Article>
             ))}
-
           {isLoading && <p>Loading...</p>}
-          {!displayFaves && <div ref={elementRef} />}
+
+          {!isLoading && !displayFaves && <div ref={elementRef} />}
         </SectionForArticles>
       </Main>
     </>
