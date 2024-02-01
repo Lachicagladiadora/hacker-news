@@ -16,6 +16,7 @@ import { Story, DataType } from "./types";
 
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
+import { LoadingStyle } from "./components/style/LoadingStyle";
 
 type pathProps = { param: string; page?: number };
 
@@ -46,7 +47,7 @@ TimeAgo.addLocale(en);
 
 const timeAgo = new TimeAgo("en-US");
 
-function App() {
+export const App = () => {
   const [selectedValue, setSelectedValue] = useState<string>("reactjs");
   const [visible, setVisible] = useState(false);
   const [news, setNews] = useState<Story[]>([]);
@@ -77,7 +78,6 @@ function App() {
     onDisplayAllNews(param);
   };
 
-  console.log({ pageInformation });
   const onDisplayAllNews = async (param: string) => {
     if (!param) return;
 
@@ -85,7 +85,6 @@ function App() {
     setIsLoading(true);
     const news = await fetchData(param, pageInformation.currentPage);
     setIsLoading(false);
-    console.log({ pageInformation });
     setPageInformation({
       currentPage: (news.page += 1),
       totalPages: news.nbPages,
@@ -125,7 +124,8 @@ function App() {
 
   useEffect(() => {
     if (!isIntersection) return;
-    if (isLoading) return; // TODO:porque es necesario esta linea
+    if (isLoading) return;
+
     getNextNewsPage();
   }, [isIntersection, getNextNewsPage, isLoading]);
 
@@ -133,8 +133,6 @@ function App() {
     <>
       <Header>Hacker News</Header>
       <Main>
-        {isLoading ? "true" : "false"}
-        {pageInformation ? pageInformation.currentPage : "not exist"}
         <SectionForButtons>
           <Button
             id="button-all"
@@ -155,16 +153,22 @@ function App() {
             <ContainOptions $visibility={visible ? "visible" : "hidden"}>
               <SelectorOption
                 children={"angular"}
+                imageName="/angular.png"
+                imageAlt="Angular icon"
                 onClick={() => onChangeProgrammingLanguage("angular")}
               />
 
               <SelectorOption
                 children={"reactjs"}
+                imageName="/reactjs.png"
+                imageAlt="React icon"
                 onClick={() => onChangeProgrammingLanguage("reactjs")}
               />
 
               <SelectorOption
                 children={"vuejs"}
+                imageName="/vuejs.png"
+                imageAlt="Vue icon"
                 onClick={() => onChangeProgrammingLanguage("vuejs")}
               />
             </ContainOptions>
@@ -175,9 +179,9 @@ function App() {
           {!isLoading && displayFaves && myFaves.length === 0 && (
             <p>... You don't have faves ...</p>
           )}
-          {!isLoading &&
-            displayFaves &&
-            myFaves.length > 0 &&
+
+          {/* faves */}
+          {displayFaves &&
             myFaves.map((cur, idx) => (
               <Article
                 key={idx}
@@ -197,10 +201,11 @@ function App() {
                 />
               </Article>
             ))}
+
           {!isLoading && Boolean(!news.length) && <p>Again try letter... </p>}
-          {!isLoading &&
-            Boolean(news.length) &&
-            !displayFaves &&
+
+          {/* news */}
+          {!displayFaves &&
             news.map((cur, idx) => (
               <Article
                 key={idx}
@@ -220,13 +225,13 @@ function App() {
                 />
               </Article>
             ))}
-          {isLoading && <p>Loading...</p>}
 
-          {!isLoading && !displayFaves && <div ref={elementRef} />}
+          {isLoading && <LoadingStyle> Loading...</LoadingStyle>}
+
+          {/* observer */}
+          {!displayFaves && <div ref={elementRef} />}
         </SectionForArticles>
       </Main>
     </>
   );
-}
-
-export default App;
+};
