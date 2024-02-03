@@ -106,6 +106,10 @@ export const App = () => {
     return myFavesIds.includes(article.story_id) ? true : false;
   };
 
+  useEffect(() => {
+    localStorage.setItem("My Faves Stories", JSON.stringify(myFaves));
+  }, [myFaves]);
+
   const getNextNewsPage = useCallback(async () => {
     setIsLoading(true);
     const data = await fetchDataForPage(
