@@ -6,13 +6,19 @@ type SelectorProps = {
   value: string;
   onClick: () => void;
   children: string | JSX.Element;
+  selectedImage: string;
 };
 
-export const Selector = ({ value, children, onClick }: SelectorProps) => {
+export const Selector = ({
+  value,
+  children,
+  selectedImage,
+  onClick,
+}: SelectorProps) => {
   return (
     <SelectorStyle onClick={onClick}>
-      <SelectedOption children={value} />
-      <img src="./public/arrow.svg" alt="" height={ImageSize.S} />
+      <SelectedOption children={value} selectedImage={selectedImage} />
+      <img src={"./public/arrow.svg"} alt="" height={ImageSize.S} />
       {children}
     </SelectorStyle>
   );

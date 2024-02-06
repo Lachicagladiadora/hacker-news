@@ -6,11 +6,11 @@ import { Button } from "./components/Button";
 import { Header } from "./components/Header";
 import { Selector } from "./components/Selector";
 import { SelectorOption } from "./components/SelectorOption";
-import { Main } from "./components/style/Main";
-import { SectionForButtons } from "./components/style/SectionForButtons";
+import { MainStyle } from "./components/style/MainStyle";
+import { SectionForButtonsStyle } from "./components/style/SectionForButtonsStyle";
 import { ContainOptions } from "./components/style/SelectorStyle";
-import { SectionForArticles } from "./components/style/SectionForArticles";
-import { SectionForSelector } from "./components/style/SectionForSelector";
+import { SectionForArticlesStyle } from "./components/style/SectionForArticlesStyle";
+import { SectionForSelectorStyle } from "./components/style/SectionForSelectorStyle";
 import { ParagraphWrapper } from "./components/ParagraphWrapper";
 import { Story, DataType } from "./types";
 
@@ -46,12 +46,11 @@ const fetchDataForPage = async (
 TimeAgo.addLocale(en);
 
 const timeAgo = new TimeAgo("en-US");
-// const favesList: Story[] = [];
 
 export const App = () => {
   const [selectedValue, setSelectedValue] = useState<string>("reactjs");
   const [visible, setVisible] = useState(false);
-  const [news, setNews] = useState<Story[]>([]);
+  const [stories, setStories] = useState<Story[]>([]);
   const [pageInformation, setPageInformation] = useState<{
     currentPage: number;
     totalPages: number;
@@ -64,8 +63,6 @@ export const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [elementRef, isIntersection] = useIntersection({ threshold: 0.5 });
 
-  // console.log(pageInformation);
-
   const onChangeProgrammingLanguage = async (param: string) => {
     if (!param) return;
 
@@ -73,27 +70,26 @@ export const App = () => {
     setIsLoading(true);
     const newStory = await fetchData(param, 1);
     setIsLoading(false);
-    // console.log({ pageInformation });
     setPageInformation({
       currentPage: 2,
       totalPages: newStory.nbPages,
     });
-    setNews(newStory.hits);
-    onDisplayAllNews(param);
+    setStories(newStory.hits);
+    onDisplayAllStories(param);
   };
 
-  const onDisplayAllNews = async (param: string) => {
+  const onDisplayAllStories = async (param: string) => {
     if (!param) return;
 
     setDisplayFaves(false);
     setIsLoading(true);
-    const news = await fetchData(param, pageInformation.currentPage);
+    const stories = await fetchData(param, pageInformation.currentPage);
     setIsLoading(false);
     setPageInformation({
-      currentPage: (news.page += 1),
-      totalPages: news.nbPages,
+      currentPage: (stories.page += 1),
+      totalPages: stories.nbPages,
     });
-    setNews(news.hits);
+    setStories(stories.hits);
   };
 
   const onToggleFave = (article: Story): void => {
@@ -110,24 +106,12 @@ export const App = () => {
     return myFavesIds.includes(article.story_id) ? true : false;
   };
 
-  // console.log(1, { myFaves });
-  // useEffect(() => {
-  //   const data: string | null = localStorage.getItem("Stories Faves");
-  //   if (data === null) return;
-  //   if (data) {
-  //     // favesList = JSON.parse(data);
-  //     // console.log(2, {myFaves})
-  //     setMyFaves(JSON.parse(data));
-  //   }
-  // }, []);
-
-  console.log(2, { myFaves });
+  // Local Storage
   useEffect(() => {
     localStorage.setItem("Stories Faves", JSON.stringify(myFaves));
-    console.log(3, { myFaves });
   }, [myFaves]);
 
-  const getNextNewsPage = useCallback(async () => {
+  const getNextStoriesPage = useCallback(async () => {
     setIsLoading(true);
     const data = await fetchDataForPage(
       selectedValue,
@@ -138,38 +122,39 @@ export const App = () => {
       currentPage: (data.page += 1),
       totalPages: data.nbPages,
     });
-    setNews((prev) => {
+    setStories((prev) => {
       return [...prev, ...data.hits];
     });
-  }, [setNews, selectedValue, pageInformation]);
+  }, [setStories, selectedValue, pageInformation]);
 
   useEffect(() => {
     if (!isIntersection) return;
     if (isLoading) return;
 
-    getNextNewsPage();
-  }, [isIntersection, getNextNewsPage, isLoading]);
+    getNextStoriesPage();
+  }, [isIntersection, getNextStoriesPage, isLoading]);
 
   return (
     <>
       <Header>Hacker News</Header>
-      <Main>
-        <SectionForButtons>
+      <MainStyle>
+        <SectionForButtonsStyle>
           <Button
             id="button-all"
             focus={true}
-            onClick={() => onDisplayAllNews(selectedValue)}
+            onClick={() => onDisplayAllStories(selectedValue)}
           >
             All
           </Button>
           <Button onClick={() => setDisplayFaves((prev) => !prev)}>
             My faves
           </Button>
-        </SectionForButtons>
-        <SectionForSelector>
+        </SectionForButtonsStyle>
+        <SectionForSelectorStyle>
           <Selector
             value={selectedValue}
             onClick={() => setVisible((prev) => !prev)}
+            selectedImage={`/${selectedValue}.png`}
           >
             <ContainOptions $visibility={visible ? "visible" : "hidden"}>
               <SelectorOption
@@ -194,9 +179,9 @@ export const App = () => {
               />
             </ContainOptions>
           </Selector>
-        </SectionForSelector>
+        </SectionForSelectorStyle>
 
-        <SectionForArticles>
+        <SectionForArticlesStyle>
           {!isLoading && displayFaves && myFaves.length === 0 && (
             <p>... You don't have faves ...</p>
           )}
@@ -223,11 +208,13 @@ export const App = () => {
               </Article>
             ))}
 
-          {!isLoading && Boolean(!news.length) && <p>Again try letter... </p>}
+          {!isLoading && Boolean(!stories.length) && (
+            <p>Again try letter... </p>
+          )}
 
           {/* news */}
           {!displayFaves &&
-            news.map((cur, idx) => (
+            stories.map((cur, idx) => (
               <Article
                 key={idx}
                 fave={storyIsFave(cur)}
@@ -251,8 +238,8 @@ export const App = () => {
 
           {/* observer */}
           {!displayFaves && <div ref={elementRef} />}
-        </SectionForArticles>
-      </Main>
+        </SectionForArticlesStyle>
+      </MainStyle>
     </>
   );
 };

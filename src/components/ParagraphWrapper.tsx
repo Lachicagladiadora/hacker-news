@@ -1,5 +1,5 @@
 import { ImageSize } from "../constants";
-import { DivTime } from "./style/DivTime";
+import { DivTimeStyle } from "./style/DivTimeStyle";
 import { ParagraphStyle } from "./style/ParagraphWrapperStyle";
 
 type ParagraphWrapperProps = {
@@ -17,7 +17,7 @@ export const ParagraphWrapper = ({
 }: ParagraphWrapperProps) => {
   return (
     <ParagraphStyle href={url}>
-      <DivTime>
+      <DivTimeStyle>
         <img
           src="https://dainty-rabanadas-77bfd0.netlify.app/iconmonstr-time-2_2.svg"
           alt="hours"
@@ -25,7 +25,7 @@ export const ParagraphWrapper = ({
           style={{ marginRight: "10px" }}
         />
         {time} by {author}
-      </DivTime>
+      </DivTimeStyle>
       <p>{title}</p>
     </ParagraphStyle>
   );

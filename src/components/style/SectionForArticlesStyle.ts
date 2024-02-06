@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const SectionForArticles = styled.section`
+export const SectionForArticlesStyle = styled.section`
   width: 100%;
   max-width: 1120px;
   margin: 0px auto;
