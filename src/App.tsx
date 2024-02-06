@@ -46,6 +46,7 @@ const fetchDataForPage = async (
 TimeAgo.addLocale(en);
 
 const timeAgo = new TimeAgo("en-US");
+// const favesList: Story[] = [];
 
 export const App = () => {
   const [selectedValue, setSelectedValue] = useState<string>("reactjs");
@@ -55,12 +56,15 @@ export const App = () => {
     currentPage: number;
     totalPages: number;
   }>({ currentPage: 1, totalPages: 0 });
-  const [myFaves, setMyFaves] = useState<Story[]>([]);
+  const [myFaves, setMyFaves] = useState<Story[]>(() => {
+    const localFaves = localStorage.getItem("Stories Faves");
+    return localFaves ? JSON.parse(localFaves) : [];
+  });
   const [displayFaves, setDisplayFaves] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [elementRef, isIntersection] = useIntersection({ threshold: 0.5 });
 
-  console.log(pageInformation);
+  // console.log(pageInformation);
 
   const onChangeProgrammingLanguage = async (param: string) => {
     if (!param) return;
@@ -69,7 +73,7 @@ export const App = () => {
     setIsLoading(true);
     const newStory = await fetchData(param, 1);
     setIsLoading(false);
-    console.log({ pageInformation });
+    // console.log({ pageInformation });
     setPageInformation({
       currentPage: 2,
       totalPages: newStory.nbPages,
@@ -106,8 +110,21 @@ export const App = () => {
     return myFavesIds.includes(article.story_id) ? true : false;
   };
 
+  // console.log(1, { myFaves });
+  // useEffect(() => {
+  //   const data: string | null = localStorage.getItem("Stories Faves");
+  //   if (data === null) return;
+  //   if (data) {
+  //     // favesList = JSON.parse(data);
+  //     // console.log(2, {myFaves})
+  //     setMyFaves(JSON.parse(data));
+  //   }
+  // }, []);
+
+  console.log(2, { myFaves });
   useEffect(() => {
-    localStorage.setItem("My Faves Stories", JSON.stringify(myFaves));
+    localStorage.setItem("Stories Faves", JSON.stringify(myFaves));
+    console.log(3, { myFaves });
   }, [myFaves]);
 
   const getNextNewsPage = useCallback(async () => {

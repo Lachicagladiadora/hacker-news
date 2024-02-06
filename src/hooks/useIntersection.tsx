@@ -12,9 +12,9 @@ export const useIntersection = (options = {}): UseIntersectionOutput => {
   useEffect(() => {
     const element = elementRef.current;
     const observer = new IntersectionObserver((entries) => {
-      console.log({ entries });
+      // console.log({ entries });
       entries.forEach((cur) => {
-        console.log(cur.isIntersecting);
+        // console.log(cur.isIntersecting);
         setIsIntersecting(cur.isIntersecting);
       });
     }, options);
