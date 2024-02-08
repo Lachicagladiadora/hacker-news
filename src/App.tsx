@@ -17,7 +17,7 @@ import { Story } from "./types";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import { LoadingStyle } from "./components/style/LoadingStyle";
-import { fetchData, fetchDataForPage } from "./utils";
+import { fetchData, getStoriesByPage } from "./utils";
 
 TimeAgo.addLocale(en);
 
@@ -87,7 +87,7 @@ export const App = () => {
 
   const getNextStoriesPage = useCallback(async () => {
     setIsLoading(true);
-    const data = await fetchDataForPage(
+    const data = await getStoriesByPage(
       selectedValue,
       pageInformation.currentPage
     );
