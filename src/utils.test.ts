@@ -1,3 +1,4 @@
+import { DataType } from "./types";
 import { addParamsToTheURL } from "./utils";
 
 describe("test utils", () => {
@@ -20,5 +21,11 @@ describe("test utils", () => {
     expect(newUrl).toBe("https://hn.algolia.com/api/v1/search_by_date?query=");
   });
 
-  // test("test get stories without page", () => {});
+  // const getStoriesByPage = require("./utils");
+  // jest.mock('');
+
+  test("test get stories without page", () => {
+    const mockGetStoriesByPage = jest.fn();
+    mockGetStoriesByPage.mockReturnValueOnce().mockReturnValueOnce(dataValue: data:Promise<DataType>);
+  });
 });
