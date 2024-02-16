@@ -1,4 +1,4 @@
-import { DataType } from "./types";
+import { StoriesPage } from "./types";
 
 type AddParamsToTheURLInput = { query: string; page?: number };
 
@@ -14,7 +14,7 @@ export const addParamsToTheURL = ({
 export const fetchData = async (
   query: string,
   page: number
-): Promise<DataType> => {
+): Promise<StoriesPage> => {
   const urlWithParams = addParamsToTheURL({ query: query, page: page });
   const data = await fetch(urlWithParams);
   const dataValue = await data.json();
@@ -29,7 +29,7 @@ type GetStoriesByPageInput = {
 export const getStoriesByPage = async ({
   query,
   page = 1,
-}: GetStoriesByPageInput): Promise<DataType> => {
+}: GetStoriesByPageInput): Promise<StoriesPage> => {
   const urlWithParams = addParamsToTheURL({ query: query, page: page });
   const data = await fetch(urlWithParams);
   const dataValue = await data.json();

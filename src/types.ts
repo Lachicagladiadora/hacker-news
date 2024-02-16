@@ -19,7 +19,7 @@ export type Story = {
   _tags: string[];
 };
 
-export type DataType = {
+export type StoriesPage = {
   exhaustive: { nbHits: boolean; typo: boolean };
   exhaustiveNbHits: boolean;
   exhaustiveTypo: boolean;

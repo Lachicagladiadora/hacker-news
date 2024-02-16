@@ -1,6 +1,5 @@
+import { StoriesPage } from "./types";
 import { addParamsToTheURL, getStoriesByPage } from "./utils";
-// import { FetchMock } from "jest-fetch-mock";
-// import { getStoriesByPage } from "./utils";
 
 describe("test utils", () => {
   test("test add query params to the URL", () => {
@@ -21,120 +20,74 @@ describe("test utils", () => {
     const newUrl = addParamsToTheURL({ query: "" });
     expect(newUrl).toBe("https://hn.algolia.com/api/v1/search_by_date?query=");
   });
+});
 
-  // const getStoriesByPage = require("./utils");
-  // jest.mock('');
-  // jest.mock("./utils");
+const QUERY_ANGULAR = "angular";
 
-  // beforeEach(() => {
-  //   getStoriesByPage({ query: "angular", page: 1 }).mockClear();
-  // });
+const MOCK_STORIES = {
+  author: "data_maan",
+  created_at: "2024-02-16T16:03:07Z",
+  created_at_i: 1708099387,
+  story_title: "Alexei Navalny has died",
+  story_url:
+    "https://www.reuters.com/world/europe/jailed-russian-opposition-leader-navalny-dead-prison-service-2024-02-16/",
+};
 
-  test("test get stories without page", async () => {
-    // const mockGetStoriesByPage = jest.fn();
+const MOCK_STORIES_PAGE_1: StoriesPage = {
+  hits: [MOCK_STORIES],
+  page: 1,
+  query: QUERY_ANGULAR,
+} as StoriesPage;
 
-    jest.mock("./utils");
+const MOCK_STORIES_PAGE_2: StoriesPage = {
+  hits: [MOCK_STORIES],
+  page: 2,
+  query: QUERY_ANGULAR,
+} as StoriesPage;
 
-    const getStoryByPage = await getStoriesByPage({
-      query: "angular",
-      page: 1,
-    });
+const MOCK_STORIES_PAGE_WITHOUT_QUERY: StoriesPage = {
+  hits: [MOCK_STORIES],
+  page: 1,
+  query: "",
+} as StoriesPage;
 
-    expect(getStoryByPage.hits[0]).toBe({});
+window.fetch = jest
+  .fn()
+  .mockImplementationOnce(() =>
+    Promise.resolve({
+      json: () => Promise.resolve(MOCK_STORIES_PAGE_1),
+    })
+  )
+  .mockImplementationOnce(() =>
+    Promise.resolve({
+      json: () => Promise.resolve(MOCK_STORIES_PAGE_2),
+    })
+  )
+  .mockImplementationOnce(() =>
+    Promise.resolve({
+      json: () => Promise.resolve(MOCK_STORIES_PAGE_WITHOUT_QUERY),
+    })
+  );
 
-    // const mock = jest.fn();
-    // console.log({ mock });
-    // mock();
-    // expect(mock).toHaveBeenCalled();
+describe("test stories by page", () => {
+  test("test stories without page", async () => {
+    const stories = await getStoriesByPage({ query: QUERY_ANGULAR });
+    expect(stories.query).toBe(QUERY_ANGULAR);
+    expect(stories.page).toBe(1);
+    expect(stories.hits).toEqual([MOCK_STORIES]);
+  });
 
-    // getStoriesByPage({ query: "angular", page: 1 }).mockReturnValueOnce({
-    //   _highlightResult: {
-    //     author: {
-    //       matchLevel: "none",
-    //       matchedWords: [],
-    //       value: "huytersd",
-    //     },
-    //     comment_text: {
-    //       fullyHighlighted: false,
-    //       matchLevel: "full",
-    //       matchedWords: ["angular"],
-    //       value:
-    //         "If you\u2019re somewhat rural the contractors just don\u2019t have the experience to do it so they try to quote you out of the decision. I had to shop around until I found a contractor that had done this before and I was able to get a whole home heat pump for about the same price as a <em>regular</em> furnace/AC system (because of the rebates).",
-    //     },
-    //     story_title: {
-    //       matchLevel: "none",
-    //       matchedWords: [],
-    //       value:
-    //         "Nine US states are teaming up to accelerate the adoption of heat pumps",
-    //     },
-    //     story_url: {
-    //       matchLevel: "none",
-    //       matchedWords: [],
-    //       value:
-    //         "https://www.wired.com/story/these-states-are-basically-begging-you-to-get-a-heat-pump/",
-    //     },
-    //   },
-    //   _tags: ["comment", "author_huytersd", "story_39315545"],
-    //   author: "huytersd",
-    //   children: [39319150, 39319137, 39319963, 39319257, 39319054],
-    //   comment_text:
-    //     "If you\u2019re somewhat rural the contractors just don\u2019t have the experience to do it so they try to quote you out of the decision. I had to shop around until I found a contractor that had done this before and I was able to get a whole home heat pump for about the same price as a regular furnace&#x2F;AC system (because of the rebates).",
-    //   created_at: "2024-02-09T19:11:18Z",
-    //   created_at_i: 1707505878,
-    //   objectID: "39319005",
-    //   parent_id: 39318968,
-    //   story_id: 39315545,
-    //   story_title:
-    //     "Nine US states are teaming up to accelerate the adoption of heat pumps",
-    //   story_url:
-    //     "https://www.wired.com/story/these-states-are-basically-begging-you-to-get-a-heat-pump/",
-    //   updated_at: "2024-02-09T22:42:25Z",
-    // });
-    // const dataValue = await fetch(
-    //   addParamsToTheURL({ query: "angular", page: 1 })
-    // );
-    // expect(await dataValue.json()).toBe({
-    //   _highlightResult: {
-    //     author: {
-    //       matchLevel: "none",
-    //       matchedWords: [],
-    //       value: "huytersd",
-    //     },
-    //     comment_text: {
-    //       fullyHighlighted: false,
-    //       matchLevel: "full",
-    //       matchedWords: ["angular"],
-    //       value:
-    //         "If you\u2019re somewhat rural the contractors just don\u2019t have the experience to do it so they try to quote you out of the decision. I had to shop around until I found a contractor that had done this before and I was able to get a whole home heat pump for about the same price as a <em>regular</em> furnace/AC system (because of the rebates).",
-    //     },
-    //     story_title: {
-    //       matchLevel: "none",
-    //       matchedWords: [],
-    //       value:
-    //         "Nine US states are teaming up to accelerate the adoption of heat pumps",
-    //     },
-    //     story_url: {
-    //       matchLevel: "none",
-    //       matchedWords: [],
-    //       value:
-    //         "https://www.wired.com/story/these-states-are-basically-begging-you-to-get-a-heat-pump/",
-    //     },
-    //   },
-    //   _tags: ["comment", "author_huytersd", "story_39315545"],
-    //   author: "huytersd",
-    //   children: [39319150, 39319137, 39319963, 39319257, 39319054],
-    //   comment_text:
-    //     "If you\u2019re somewhat rural the contractors just don\u2019t have the experience to do it so they try to quote you out of the decision. I had to shop around until I found a contractor that had done this before and I was able to get a whole home heat pump for about the same price as a regular furnace&#x2F;AC system (because of the rebates).",
-    //   created_at: "2024-02-09T19:11:18Z",
-    //   created_at_i: 1707505878,
-    //   objectID: "39319005",
-    //   parent_id: 39318968,
-    //   story_id: 39315545,
-    //   story_title:
-    //     "Nine US states are teaming up to accelerate the adoption of heat pumps",
-    //   story_url:
-    //     "https://www.wired.com/story/these-states-are-basically-begging-you-to-get-a-heat-pump/",
-    //   updated_at: "2024-02-09T22:42:25Z",
-    // });
+  test("test stories with page", async () => {
+    const stories = await getStoriesByPage({ query: QUERY_ANGULAR, page: 2 });
+    expect(stories.query).toBe(QUERY_ANGULAR);
+    expect(stories.page).toBe(2);
+    expect(stories.hits).toEqual([MOCK_STORIES]);
+  });
+
+  test("test stories without query", async () => {
+    const stories = await getStoriesByPage({ query: "", page: 1 });
+    expect(stories.query).toBe("");
+    expect(stories.page).toBe(1);
+    expect(stories.hits).toEqual([MOCK_STORIES]);
   });
 });
