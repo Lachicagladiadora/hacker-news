@@ -1,30 +1,43 @@
-# React + TypeScript + Vite
+# Hacker News
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Hacker News is a web application built using React and TypeScript with Vite as the bundler. It utilizes the [Hacker News Algolia API](https://hn.algolia.com/api/v1/search_by_date?query=reactjs&page=1) to fetch the latest stories.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Two Sections:**
 
-## Expanding the ESLint configuration
+  - **Watch Stories:** Browse stories from various programming languages.
+  - **Bookmarked Stories:** View stories you've bookmarked.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Bookmarking:** You can bookmark your favorite stories for later viewing.
 
-- Configure the top-level `parserOptions` property like this:
+- **Local Storage:** Bookmarked stories are saved locally using browser's local storage.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+- **Responsive Design:** The application is responsive and adapts well to different screen sizes.
+
+#### Desktop
+
+![alt text](image.png)
+
+#### Tablet
+
+![alt text](image-1.png)
+
+#### Mobile
+
+![alt text](image-2.png)
+
+## How to run
+
+To get started, clone the repository and install dependencies:
+
+1. Clone this repository.
+
+```bash
+git clone https://github.com/Lachicagladiadora/hacker-news.git
+cd hacker-news
+code hacker-news
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+2. Run `npm install` to install the dependencies.
+3. Run `npm run dev` to run the server so you can enjoy the viewing.
