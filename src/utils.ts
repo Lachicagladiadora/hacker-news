@@ -11,16 +11,6 @@ export const addParamsToTheURL = ({
   return `${URL}?query=${query}&page=${page}`;
 };
 
-export const fetchData = async (
-  query: string,
-  page: number
-): Promise<StoriesPage> => {
-  const urlWithParams = addParamsToTheURL({ query: query, page: page });
-  const data = await fetch(urlWithParams);
-  const dataValue = await data.json();
-  return dataValue;
-};
-
 type GetStoriesByPageInput = {
   query: string;
   page?: number;

@@ -5,11 +5,18 @@ type ButtonProps = {
   onClick: () => void;
   id?: string;
   focus?: boolean;
+  style?: React.CSSProperties;
 };
 
-export const Button = ({ children, onClick, focus, id }: ButtonProps) => {
+export const Button = ({
+  children,
+  onClick,
+  focus,
+  id,
+  style,
+}: ButtonProps) => {
   return (
-    <ButtonStyle id={id} onClick={onClick} autoFocus={focus}>
+    <ButtonStyle id={id} onClick={onClick} autoFocus={focus} style={style}>
       {children}
     </ButtonStyle>
   );

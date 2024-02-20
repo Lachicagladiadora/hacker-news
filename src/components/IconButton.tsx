@@ -7,11 +7,12 @@ type IconButtonProps = {
   children: ReactElement<SVGProps> | ReactElement<SVGProps & { d: string }>;
   onClick: () => void;
   title: string;
+  id?:string
 };
 
-export const IconButton = ({ children, onClick, title }: IconButtonProps) => {
+export const IconButton = ({ children, onClick, title,id }: IconButtonProps) => {
   return (
-    <IconButtonStyle onClick={onClick} title={title}>
+    <IconButtonStyle onClick={onClick} title={title} id={id}>
       {children}
     </IconButtonStyle>
   );

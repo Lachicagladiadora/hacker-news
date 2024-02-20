@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useIntersection } from "./hooks/useIntersection";
 
 import { Article } from "./components/Article";
@@ -17,7 +17,7 @@ import { Story } from "./types";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import { LoadingStyle } from "./components/style/LoadingStyle";
-import { fetchData, getStoriesByPage } from "./utils";
+import { getStoriesByPage } from "./utils";
 
 TimeAgo.addLocale(en);
 
@@ -25,13 +25,13 @@ const timeAgo = new TimeAgo("en-US");
 
 export const App = () => {
   const [selectedValue, setSelectedValue] = useState<string>("reactjs");
-  const [visible, setVisible] = useState(false);
+  const [observerIsVisible, setVisible] = useState(false);
   const [stories, setStories] = useState<Story[]>([]);
 
-  const [pageInformation, setPageInformation] = useState<{
+  const pageInformationRef = useRef<{
     currentPage: number;
     totalPages: number;
-  }>({ currentPage: 1, totalPages: 0 });
+  }>({ currentPage: 0, totalPages: 0 });
 
   const [myFaves, setMyFaves] = useState<Story[]>(() => {
     const localFaves = localStorage.getItem("Stories Faves");
@@ -40,36 +40,9 @@ export const App = () => {
 
   const [displayFaves, setDisplayFaves] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [elementRef, isIntersection] = useIntersection({ threshold: 0.5 });
-
-  const onChangeProgrammingLanguage = async (param: string) => {
-    if (!param) return;
-
-    setSelectedValue(param);
-    setIsLoading(true);
-    const newStory = await fetchData(param, 1);
-    setIsLoading(false);
-    setPageInformation({
-      currentPage: 2,
-      totalPages: newStory.nbPages,
-    });
-    setStories(newStory.hits);
-    onDisplayAllStories(param);
-  };
-
-  const onDisplayAllStories = async (param: string) => {
-    if (!param) return;
-
-    setDisplayFaves(false);
-    setIsLoading(true);
-    const stories = await fetchData(param, pageInformation.currentPage);
-    setIsLoading(false);
-    setPageInformation({
-      currentPage: (stories.page += 1),
-      totalPages: stories.nbPages,
-    });
-    setStories(stories.hits);
-  };
+  const [observerRef, observerIsIntersection] = useIntersection({
+    threshold: 0.5,
+  });
 
   const onToggleFave = (article: Story): void => {
     const myFavesIds = myFaves.map((c) => c.story_id);
@@ -82,31 +55,48 @@ export const App = () => {
 
   const storyIsFave = (article: Story) => {
     const myFavesIds = myFaves.map((c) => c.story_id);
-    return myFavesIds.includes(article.story_id) ? true : false;
+    return myFavesIds.includes(article.story_id);
   };
 
-  const getNextStoriesPage = useCallback(async () => {
-    setIsLoading(true);
-    const data = await getStoriesByPage(
-      selectedValue,
-      pageInformation.currentPage
-    );
-    setIsLoading(false);
-    setPageInformation({
-      currentPage: (data.page += 1),
-      totalPages: data.nbPages,
-    });
-    setStories((prev) => {
-      return [...prev, ...data.hits];
-    });
-  }, [setStories, selectedValue, pageInformation]);
+  type OnGetStoriesByPageInput = { query: string; page: number };
+  const onGetStoriesByPage = useCallback(
+    async ({ query, page = 1 }: OnGetStoriesByPageInput) => {
+      setIsLoading(true);
+      const data = await getStoriesByPage({ query, page });
+      setIsLoading(false);
+      pageInformationRef.current = {
+        currentPage: data.page,
+        totalPages: data.nbPages,
+      };
+      setStories((prev) => [...prev, ...data.hits]);
+    },
+    []
+  );
 
+  const onChangeProgrammingLanguage = async (language: string) => {
+    pageInformationRef.current.currentPage = 0;
+    setSelectedValue(language);
+    setIsLoading(true);
+    setStories([]);
+    const data = await getStoriesByPage({ query: language, page: 1 });
+    pageInformationRef.current = {
+      currentPage: data.page,
+      totalPages: data.nbPages,
+    };
+    setStories((prev) => [...prev, ...data.hits]);
+    setIsLoading(false);
+  };
+
+  // get stories when observer is intersecting
   useEffect(() => {
-    if (!isIntersection) return;
+    if (!observerIsIntersection) return;
     if (isLoading) return;
 
-    getNextStoriesPage();
-  }, [isIntersection, getNextStoriesPage, isLoading]);
+    onGetStoriesByPage({
+      query: selectedValue,
+      page: pageInformationRef.current.currentPage + 1,
+    });
+  }, [observerIsIntersection, onGetStoriesByPage, isLoading, selectedValue]);
 
   // Local Storage
   useEffect(() => {
@@ -116,19 +106,26 @@ export const App = () => {
   return (
     <>
       <Header>Hacker News</Header>
-      {displayFaves ? "T" : "F"}
       <MainStyle>
         <SectionForButtonsStyle>
           <Button
-            // id="button-all"
-            onClick={() => onDisplayAllStories(selectedValue)}
+            onClick={() => setDisplayFaves(false)}
+            style={{
+              ...(!displayFaves && {
+                border: "solid 2px royalBlue",
+                color: "royalblue",
+              }),
+            }}
           >
             All
           </Button>
           <Button
-            onClick={() => {
-              console.log("my faves X");
-              setDisplayFaves((prev) => !prev);
+            onClick={() => setDisplayFaves(true)}
+            style={{
+              ...(displayFaves && {
+                border: "solid 2px royalBlue",
+                color: "royalblue",
+              }),
             }}
           >
             My faves
@@ -141,7 +138,9 @@ export const App = () => {
             selectedImage={`/${selectedValue}.png`}
             id="news-types"
           >
-            <ContainOptions $visibility={visible ? "visible" : "hidden"}>
+            <ContainOptions
+              $visibility={observerIsVisible ? "visible" : "hidden"}
+            >
               <SelectorOption
                 children={"angular"}
                 imageName="/angular.png"
@@ -173,9 +172,10 @@ export const App = () => {
 
           {/* faves */}
           {displayFaves &&
-            myFaves.map((cur, idx) => (
+            myFaves.map((cur) => (
               <Article
-                key={idx}
+                key={cur.story_id}
+                id={cur.story_id.toString()}
                 fave={storyIsFave(cur)}
                 title="Add to faves"
                 onClick={() => onToggleFave(cur)}
@@ -199,9 +199,10 @@ export const App = () => {
 
           {/* news */}
           {!displayFaves &&
-            stories.map((cur, idx) => (
+            stories.map((cur) => (
               <Article
-                key={idx}
+                key={cur.story_id.toString()}
+                id={cur.story_id.toString()}
                 fave={storyIsFave(cur)}
                 title="Add to faves"
                 onClick={() => onToggleFave(cur)}
@@ -222,7 +223,7 @@ export const App = () => {
           {isLoading && <LoadingStyle> Loading...</LoadingStyle>}
 
           {/* observer */}
-          {!displayFaves && <div ref={elementRef} />}
+          {!displayFaves && <div ref={observerRef} />}
         </SectionForArticlesStyle>
       </MainStyle>
     </>
