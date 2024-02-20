@@ -3,18 +3,19 @@ import { OptionImageStyle, OptionStyle } from "./style/SelectorStyle";
 type SelectorOptionProps = {
   children: string | JSX.Element;
   imageName: string;
-  imageAlt?:string
+  imageAlt?: string;
   imageSize?: string;
   textSize?: string;
   paddingSize?: string;
   backgroundColor?: string;
+
   onClick?: () => void;
 };
 
 export const SelectorOption = ({
   children,
   imageName,
-  imageAlt='',
+  imageAlt = "",
   imageSize,
   textSize,
   paddingSize,
@@ -28,11 +29,7 @@ export const SelectorOption = ({
       $backgroundColor={backgroundColor}
       onClick={onClick}
     >
-      <OptionImageStyle
-        src={imageName}
-        alt={imageAlt}
-        $imageSize={imageSize}
-      />
+      <OptionImageStyle src={imageName} alt={imageAlt} $imageSize={imageSize} />
       {children}
     </OptionStyle>
   );

@@ -116,16 +116,21 @@ export const App = () => {
   return (
     <>
       <Header>Hacker News</Header>
+      {displayFaves ? "T" : "F"}
       <MainStyle>
         <SectionForButtonsStyle>
           <Button
-            id="button-all"
-            focus={true}
+            // id="button-all"
             onClick={() => onDisplayAllStories(selectedValue)}
           >
             All
           </Button>
-          <Button onClick={() => setDisplayFaves((prev) => !prev)}>
+          <Button
+            onClick={() => {
+              console.log("my faves X");
+              setDisplayFaves((prev) => !prev);
+            }}
+          >
             My faves
           </Button>
         </SectionForButtonsStyle>
@@ -134,6 +139,7 @@ export const App = () => {
             value={selectedValue}
             onClick={() => setVisible((prev) => !prev)}
             selectedImage={`/${selectedValue}.png`}
+            id="news-types"
           >
             <ContainOptions $visibility={visible ? "visible" : "hidden"}>
               <SelectorOption
